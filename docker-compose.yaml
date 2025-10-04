@@ -21,7 +21,6 @@ services:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
 
-      MIGRATE: ${MIGRATE:-0}
     volumes:
       - ./app:/var/www/html
     depends_on:

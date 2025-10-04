@@ -39,10 +39,6 @@ if ! grep -qE '^APP_KEY=.{10,}$' .env; then
   php artisan key:generate --no-interaction --ansi || true
 fi
 
-if [ "${APP_ENV:-local}" != "production" ]; then
-  php artisan optimize:clear || true
-fi
-
 tries=30
 until php -r "new PDO('mysql:host=${DB_HOST:-mysql};port=${DB_PORT:-3306};dbname=${DB_DATABASE:-lab08}','${DB_USERNAME:-lab08}','${DB_PASSWORD:-secret}');" >/dev/null 2>&1; do
   echo "[entrypoint] Waiting for MySQL at ${DB_HOST:-mysql}:${DB_PORT:-3306}..."
@@ -50,13 +46,6 @@ until php -r "new PDO('mysql:host=${DB_HOST:-mysql};port=${DB_PORT:-3306};dbname
   tries=$((tries-1))
   [ $tries -le 0 ] && echo "[entrypoint] MySQL wait timeout, continuing..." && break
 done
-
-if [ "${MIGRATE:-0}" = "1" ]; then
-  echo "[entrypoint] Running migrations..."
-  php artisan migrate --force || true
-  php artisan db:seed --force || true
-fi
-
 
 env APP_KEY
 
