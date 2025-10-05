@@ -1,11 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\V1\StoreUserRequest;
+use App\Models\User;
+use App\Services\UserService;
+use App\Support\ApiResponse;
 
-class UserController extends Controller
+final class UserController extends Controller
 {
-    //
+    public function __construct(private readonly UserService $users) {}
+
+    public function store(StoreUserRequest $request)
+    {
+        $u = $this->users->create(
+            $request->string('name')->toString(),
+            $request->string('email')->toString(),
+            $request->string('password')->toString(),
+        );
+
+        return ApiResponse::data([
+            'id'    => $u->id,
+            'name'  => $u->name,
+            'email' => $u->email,
+        ], 201);
+    }
+
+    public function destroy(User $user)
+    {
+        $this->users->delete($user);
+        return ApiResponse::data(['deleted' => true]);
+    }
 }
