@@ -22,6 +22,11 @@ docker-compose up -d
 docker-compose down
 ```
 
+**Run tests:**
+```bash
+docker-compose exec app php artisan test
+```
+
 ## API Documentation
 
 Import `postman_collection.json` into Postman.
