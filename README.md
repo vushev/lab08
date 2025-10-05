@@ -12,7 +12,7 @@ DB_USERNAME=lab
 DB_PASSWORD=lab123
 ```
 
-**Start:**
+**Start:** need to be run from root directory
 ```bash
 docker-compose up -d
 ```
@@ -24,7 +24,7 @@ docker-compose down
 
 ## API Documentation
 
-Import `postman_collection.json` and `postman_environment.json` into Postman.
+Import `postman_collection.json` into Postman.
 
 **Notes:**
 - After creating a user, the token is automatically saved to the `pat` variable
