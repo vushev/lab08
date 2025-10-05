@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Repositories\AlertRepository;
-use App\Repositories\MeasurementRepository;
+use App\Repositories\AlertRepositoryInterface;
+use App\Repositories\MeasurementRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
 final class MeasurementService
 {
     public function __construct(
-        private readonly MeasurementRepository $measurements,
-        private readonly AlertRepository $alerts,
+        private readonly MeasurementRepositoryInterface $measurements,
+        private readonly AlertRepositoryInterface $alerts,
     ) {}
 
     public function create(

@@ -7,7 +7,7 @@ namespace App\Repositories;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
-final class MeasurementRepository
+final class MeasurementRepository implements MeasurementRepositoryInterface
 {
     public function store(
         int $deviceId,

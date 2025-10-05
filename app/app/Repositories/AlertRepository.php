@@ -6,7 +6,7 @@ namespace App\Repositories;
 
 use App\Models\Alert;
 
-final class AlertRepository
+final class AlertRepository implements AlertRepositoryInterface
 {
     public function create(array $data): Alert
     {

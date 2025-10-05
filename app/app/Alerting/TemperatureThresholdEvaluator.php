@@ -18,7 +18,7 @@ final class TemperatureThresholdEvaluator implements AlertEvaluatorInterface
     {
         $t = (float) $measurement->temperature_c;
 
-        if ($t < $this->min || $t > $this->max) {
+        if ($t <= $this->min || $t >= $this->max) {
             return [[
                 'type' => 'temperature_threshold',
                 'message' => sprintf('Temperature %.2f°C out of range (%.2f..%.2f)', $t, $this->min, $this->max),

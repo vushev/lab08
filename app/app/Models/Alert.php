@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\OwnedByCurrentOwner;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Alert extends Model
 {
     use HasFactory;
+    use OwnedByCurrentOwner;
 
     public $timestamps = false;
 
