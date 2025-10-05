@@ -19,13 +19,15 @@ final class UserController extends Controller
         $u = $this->users->create(
             $request->string('name')->toString(),
             $request->string('email')->toString(),
-            $request->string('password')->toString(),
         );
+
+        $token = $u->createToken('postman')->plainTextToken;
 
         return ApiResponse::data([
             'id'    => $u->id,
             'name'  => $u->name,
             'email' => $u->email,
+            'token' => $token,
         ], 201);
     }
 

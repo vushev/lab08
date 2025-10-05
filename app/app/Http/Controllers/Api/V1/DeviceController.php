@@ -41,26 +41,32 @@ final class DeviceController extends Controller
     public function destroy(Request $request, Device $device)
     {
         $this->authorize('delete', $device);
+
         $this->devices->delete($device);
+
         return ApiResponse::data(['deleted' => true]);
     }
 
     public function attach(AttachDeviceRequest $request, Device $device)
     {
-        $this->authorize('update', $device);
-        $user = User::findOrFail((int) $request->input('user_id'));
-        /** @var User $actor */
-        $actor = $request->user();
+        $this->authorize('attach', $device);
 
-        $this->devices->attach($device, $user, $actor);
-        return ApiResponse::data(['attached_to' => $user->id]);
+        $user = User::findOrFail((int) $request->input('user_id'));
+
+        $this->devices->attach($device, $user);
+
+        return ApiResponse::data(['attached_to' => $user->id], 200);
     }
 
     public function detach(DetachDeviceRequest $request, Device $device)
     {
-        $this->authorize('update', $device);
+        $this->authorize('detach', $device);
+
         $user = User::findOrFail((int) $request->input('user_id'));
+
         $this->devices->detach($device, $user);
-        return ApiResponse::data(['detached_from' => $user->id]);
+
+        return ApiResponse::data(['detached_from' => $user->id], 200);
+
     }
 }

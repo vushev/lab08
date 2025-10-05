@@ -16,12 +16,14 @@ final class MeController extends Controller
     public function measurements(MeMeasurementsRequest $request)
     {
         $me = $request->user();
+        $tbl = (new Measurement())->getTable();
 
-        $q = Measurement::ownedBy($me)
-            ->when($request->integer('device_id'), fn($qq, $id) => $qq->where('device_id', $id))
-            ->when($request->input('from'), fn($qq, $v) => $qq->where('recorded_at', '>=', $v))
-            ->when($request->input('to'),   fn($qq, $v) => $qq->where('recorded_at', '<=', $v))
-            ->orderByDesc('recorded_at');
+        $q = Measurement::query()
+            ->ownedBy($me)
+            ->when($request->integer('device_id'), fn($qq, $id) => $qq->where($tbl . '.device_id', $id))
+            ->when($request->input('from'), fn($qq, $v) => $qq->where($tbl . '.recorded_at', '>=', $v))
+            ->when($request->input('to'),   fn($qq, $v) => $qq->where($tbl . '.recorded_at', '<=', $v))
+            ->orderByDesc($tbl . '.recorded_at');
 
         return ApiResponse::data($q->paginate(50));
     }
