@@ -13,7 +13,6 @@ final class Tenancy
         return DB::table('device_user')
             ->where('user_id', $userId)
             ->where('device_id', $deviceId)
-            ->whereNull('detached_at')
             ->where('is_active', 1)
             ->exists();
     }
