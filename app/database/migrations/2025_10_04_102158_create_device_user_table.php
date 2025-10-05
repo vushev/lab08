@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->id();
             $table->foreignId('device_id')->constrained()->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->unsignedTinyInteger('is_active')->default(1);
+            $table->unsignedTinyInteger('is_active')->default(1)->nullable();
             
             $table->unique(['device_id', 'is_active'], 'device_active_owner_unique');
 

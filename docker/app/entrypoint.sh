@@ -47,6 +47,8 @@ until php -r "new PDO('mysql:host=${DB_HOST:-mysql};port=${DB_PORT:-3306};dbname
   [ $tries -le 0 ] && echo "[entrypoint] MySQL wait timeout, continuing..." && break
 done
 
+php artisan migrate --force --no-interaction || true
+
 env APP_KEY
 
 upsert_env APP_NAME      "${APP_NAME:-Lab08}"

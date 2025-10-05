@@ -17,9 +17,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        return;
         $now = now();
+        
+        $u1Id = User::firstOrCreate([
+            'name' => 'Lab08',
+            'email' => 'lab08@example.com',
+            'password' => Hash::make('password'),
+            'created_at' => $now,
+            'updated_at' => $now,
+        ]);
 
-        $aliceId = DB::table('users')->insertGetId([
+        if (! $u1Id->tokens()->where('name', 'postman')->exists()) {
+            $pat = $u1Id->createToken('postman')->plainTextToken;
+            $this->command?->info('PAT (postman): ' . $pat);
+        }
+
+        $u2Id = DB::table('users')->insertGetId([
             'name' => 'Spas Lutov',
             'email' => 'spas@example.com',
             'password' => Hash::make('password'),
@@ -27,7 +41,7 @@ class DatabaseSeeder extends Seeder
             'updated_at' => $now,
         ]);
 
-        $bobId = DB::table('users')->insertGetId([
+        $u3Id = DB::table('users')->insertGetId([
             'name' => 'Simeon Todorov',
             'email' => 'simeon@example.com',
             'password' => Hash::make('password'),
@@ -59,11 +73,11 @@ class DatabaseSeeder extends Seeder
         DB::table('device_user')->insert([
             [
                 'device_id'   => $d1Id,
-                'user_id'     => $aliceId,
+                'user_id'     => $u2Id,
             ],
             [
                 'device_id'   => $d2Id,
-                'user_id'     => $bobId,
+                'user_id'     => $u3Id,
             ],
         ]);
 
@@ -88,7 +102,7 @@ class DatabaseSeeder extends Seeder
         // Demo alert (high temperature)
         DB::table('alerts')->insert([
             'device_id'      => $d2Id,
-            'user_id'        => $bobId,
+            'user_id'        => $u3Id,
             'measurement_id' => $m2Id,
             'type'           => 'temperature_threshold',
             'message'        => 'Temperature 31.00°C out of threshold [0.00..30.00]',
