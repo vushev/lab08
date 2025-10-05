@@ -1,0 +1,535 @@
+{
+    "info": {
+        "_postman_id": "b2f2a4c5-2f1a-4f0a-9b1a-0000lab08iot",
+        "name": "Lab08 – IoT API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{pat}}",
+                "type": "string"
+            }
+        ]
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "pat",
+            "value": ""
+        },
+        {
+            "key": "device_token",
+            "value": ""
+        },
+        {
+            "key": "device_id",
+            "value": "1"
+        },
+        {
+            "key": "device_uuid",
+            "value": ""
+        },
+        {
+            "key": "user_id",
+            "value": "1"
+        },
+        {
+            "key": "status",
+            "value": "open"
+        }
+    ],
+    "item": [
+        {
+            "name": "Auth /api/user (PAT)",
+            "request": {
+                "method": "GET",
+                "header": [
+                    {
+                        "key": "Accept",
+                        "value": "application/json"
+                    }
+                ],
+                "url": {
+                    "raw": "{{baseUrl}}/api/user",
+                    "host": [
+                        "{{baseUrl}}"
+                    ],
+                    "path": [
+                        "api",
+                        "user"
+                    ]
+                }
+            }
+        },
+        {
+            "name": "v1",
+            "item": [
+                {
+                    "name": "Users",
+                    "item": [
+                        {
+                            "name": "POST /api/v1/users — create",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"lab08\",\n  \"email\": \"lab08@example.com\",\n  \"password\": \"secret123\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/users",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "users"
+                                    ]
+                                }
+                            },
+                            "event": [
+                                {
+                                    "listen": "test",
+                                    "script": {
+                                        "type": "text/javascript",
+                                        "exec": [
+                                            "pm.test('User created (201)', () => pm.response.to.have.status(201));",
+                                            "const json = pm.response.json() || {};",
+                                            "const id   = json?.data?.id;",
+                                            "const pat  = json?.data?.token;",
+                                            "if (id) { pm.environment.set('user_id', id); pm.collectionVariables.set('user_id', id); }",
+                                            "if (pat) { pm.environment.set('pat', pat); pm.collectionVariables.set('pat', pat); console.log('PAT set ->', pat); }",
+                                            "pm.test('PAT captured', () => { const v = pm.environment.get('pat') || pm.collectionVariables.get('pat') || ''; pm.expect(v.length).to.be.greaterThan(10); });"
+                                        ]
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "DELETE /api/v1/users/{id}",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/users/{{user_id}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "users",
+                                        "{{user_id}}"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Devices",
+                    "item": [
+                        {
+                            "name": "POST /api/v1/devices — create (returns api_token)",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"name\": \"Freezer Sensor\",\n  \"serial\": \"SN-123456\"\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "DELETE /api/v1/devices/{device}",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "DELETE",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices/{{device_uuid}}{{#device_uuid}}{{/device_uuid}}{{^device_uuid}}{{device_id}}{{/device_uuid}}",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices",
+                                        "{{device_id}}"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "POST /api/v1/devices/{device}/attach",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": {{user_id}}\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices/{{device_id}}/attach",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices",
+                                        "{{device_id}}",
+                                        "attach"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "POST /api/v1/devices/{device}/detach",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"user_id\": {{user_id}}\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices/{{device_id}}/detach",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices",
+                                        "{{device_id}}",
+                                        "detach"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "POST /api/v1/devices/{device}/ping (dual)",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "X-Device-Token",
+                                        "value": "{{device_token}}"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices/{{device_id}}/ping",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices",
+                                        "{{device_id}}",
+                                        "ping"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Measurements",
+                    "item": [
+                        {
+                            "name": "POST /api/v1/devices/{device}/measurements - via Device Token OR PAT",
+                            "request": {
+                                "method": "POST",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "Content-Type",
+                                        "value": "application/json"
+                                    },
+                                    {
+                                        "key": "X-Device-Token",
+                                        "value": "{{device_token}}"
+                                    }
+                                ],
+                                "body": {
+                                    "mode": "raw",
+                                    "raw": "{\n  \"temperature_c\": 31.25,\n  \"recorded_at\": \"2025-10-04T10:00:00Z\",\n  \"payload\": {\"note\":\"high\"}\n}"
+                                },
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/devices/{{device_id}}/measurements",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "devices",
+                                        "{{device_id}}",
+                                        "measurements"
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "Me",
+                    "item": [
+                        {
+                            "name": "GET /api/v1/me/devices",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/me/devices",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "me",
+                                        "devices"
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "GET /api/v1/me/measurements",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/me/measurements?device_id={{device_id}}&from=2025-10-04T10:00:00Z&to=2025-10-04T12:00:00Z",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "me",
+                                        "measurements"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "device_id",
+                                            "value": "{{device_id}}"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2025-10-04T10:00:00Z"
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2025-10-04T12:00:00Z"
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "name": "GET /api/v1/me/alerts",
+                            "request": {
+                                "auth": {
+                                    "type": "bearer",
+                                    "bearer": [
+                                        {
+                                            "key": "token",
+                                            "value": "{{pat}}",
+                                            "type": "string"
+                                        }
+                                    ]
+                                },
+                                "method": "GET",
+                                "header": [
+                                    {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                    }
+                                ],
+                                "url": {
+                                    "raw": "{{baseUrl}}/api/v1/me/alerts?status={{status}}&from=2025-10-04T10:00:00Z&to=2025-10-04T12:00:00Z",
+                                    "host": [
+                                        "{{baseUrl}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "me",
+                                        "alerts"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "status",
+                                            "value": "{{status}}"
+                                        },
+                                        {
+                                            "key": "from",
+                                            "value": "2025-10-04T10:00:00Z"
+                                        },
+                                        {
+                                            "key": "to",
+                                            "value": "2025-10-04T12:00:00Z"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
